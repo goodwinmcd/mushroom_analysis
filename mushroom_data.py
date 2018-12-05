@@ -8,6 +8,8 @@ pp = pprint.PrettyPrinter(indent=4)
 mushrooms = pd.read_csv('C:\\Users\\mcdonago\\source\\repos\\mushroom_data\\mushroom_data\\mushrooms.csv')
 barWidth = .35
 figure_counter = 0
+cut_off_sample_size = 100
+cut_off_ratio = .9
 
 def fill_missing_values(grouped_by_dict):
     return grouped_by_dict.unstack(fill_value=0)
@@ -76,22 +78,40 @@ def get_all_ratios(all_data):
         all_ratios[column] = column_ratio
     return all_ratios
 
+def set_correlation(mush_dict):
+    for column in list(mush_dict):
+        for value in list(mush_dict[column]):
+            if .25<mush_dict[column][value]['ratio']<.75:
+                mush_dict[column][value]['correlation'] = 'no correlation'
+            if ((.1<mush_dict[column][value]['ratio']<=.25) or 
+               (.75<=mush_dict[column][value]['ratio']<=.9)): 
+                mush_dict[column][value]['correlation'] = 'correlated'
+            if ((0<=mush_dict[column][value]['ratio']<=.1) or 
+               (.9<mush_dict[column][value]['ratio']<=1)):
+                mush_dict[column][value]['correlation'] = 'strongly correlated'
+
+def rem_keys(mush_dict, rem_key, cut_off):
+    rem_col = {}
+    for column in list(mush_dict):
+        for value in list(mush_dict[column]):
+            if mush_dict[column][value][rem_key] < cut_off:
+                rem_col[column] = {}
+                rem_col[column][value] = mush_dict[column].pop(value, None)
+    return rem_col
+
+def rem_small_totals(mush_dict):
+    return rem_keys(mush_dict, 'total', cut_off_sample_size)
+
+def rem_small_ratios(mush_dict):
+    return rem_keys(mush_dict, 'ratio', cut_off_ratio)
 
 #graph_all_columns(mushrooms)
 #plt.show()
 all_col_ratios = get_all_ratios(mushrooms)
+set_correlation(all_col_ratios)
+#removed_total_columns = rem_small_totals(all_col_ratios)
+#removed_ratio_columns = rem_small_ratios(all_col_ratios)
 
-############################################
-# Bar graph data for cap shape 
-############################################
-#cap_shape = ready_data(mushrooms, 'cap-shape')
-#edible_cap_mush, poison_cap_mush = seperate_edible_mushrooms(cap_shape)
-#############################################
-#graph_data(cap_shape, edible_cap_mush, poison_cap_mush)
-
-#cap_surface = ready_data(mushrooms, 'cap-surface')
-#edible_surface_mush, poison_surface_mush = seperate_edible_mushrooms(cap_surface)
-#graph_data(cap_surface, edible_surface_mush, poison_surface_mush)
 
 
 
