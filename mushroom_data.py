@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 import pprint
 
@@ -107,10 +108,15 @@ def rem_small_ratios(mush_dict):
 
 #graph_all_columns(mushrooms)
 #plt.show()
-all_col_ratios = get_all_ratios(mushrooms)
-set_correlation(all_col_ratios)
+#all_col_ratios = get_all_ratios(mushrooms)
+#set_correlation(all_col_ratios)
 #removed_total_columns = rem_small_totals(all_col_ratios)
 #removed_ratio_columns = rem_small_ratios(all_col_ratios)
+y_data = mushrooms['class']
+x_data = mushrooms.drop(columns=['class'])
+
+lr = LogisticRegression()
+
 
 
 
