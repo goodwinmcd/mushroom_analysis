@@ -20,6 +20,8 @@ mushrooms = treat_all_data(mushrooms)
 x_data = mushrooms.drop(columns=['class'])
 y_data = mushrooms['class']
 
+print(mushrooms.corr())
+
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=.2)
 
 lg = LogisticRegression()

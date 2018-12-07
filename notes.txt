@@ -3,3 +3,8 @@ dealing with categorical features:
 
 fitting the model:
   https://towardsdatascience.com/solving-a-simple-classification-problem-with-python-fruits-lovers-edition-d20ab6b071d2
+
+commands:
+  data.describe() - mean, freq, median, unique, top freq, count is shown
+  pd.get_dummies(data) - transform data into dummy/indicator values (0 or 1s)
+  

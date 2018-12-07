@@ -6,7 +6,7 @@ import pprint
 
 pd.set_option('display.max_columns', None)
 pp = pprint.PrettyPrinter(indent=4)
-mushrooms = pd.read_csv('C:\\Users\\mcdonago\\source\\repos\\mushroom_data\\mushroom_data\\mushrooms.csv')
+mushrooms = pd.read_csv('/home/goodwin/Documents/Projects/mushroom_analysis/mushrooms.csv')
 barWidth = .35
 figure_counter = 0
 cut_off_sample_size = 100
@@ -64,7 +64,7 @@ def get_ratios(readied_data):
         poison_value = readied_data[key]['p']
         total = edible_value + poison_value
         column_ratios[key]['ratio'] = abs((edible_value - poison_value)/(total))
-        column_ratios[key]['total'] = total 
+        column_ratios[key]['total'] = total
         column_ratios[key]['edible'] = edible_value
         column_ratios[key]['poison'] = poison_value
     return column_ratios
@@ -82,13 +82,11 @@ def get_all_ratios(all_data):
 def set_correlation(mush_dict):
     for column in list(mush_dict):
         for value in list(mush_dict[column]):
-            if .25<mush_dict[column][value]['ratio']<.75:
+            if mush_dict[column][value]['ratio']<.75:
                 mush_dict[column][value]['correlation'] = 'no correlation'
-            if ((.1<mush_dict[column][value]['ratio']<=.25) or 
-               (.75<=mush_dict[column][value]['ratio']<=.9)): 
+            if .75<=mush_dict[column][value]['ratio']<.9:
                 mush_dict[column][value]['correlation'] = 'correlated'
-            if ((0<=mush_dict[column][value]['ratio']<=.1) or 
-               (.9<mush_dict[column][value]['ratio']<=1)):
+            if .9<=mush_dict[column][value]['ratio']<=1:
                 mush_dict[column][value]['correlation'] = 'strongly correlated'
 
 def rem_keys(mush_dict, rem_key, cut_off):
@@ -106,20 +104,26 @@ def rem_small_totals(mush_dict):
 def rem_small_ratios(mush_dict):
     return rem_keys(mush_dict, 'ratio', cut_off_ratio)
 
+def sort_correlations(correlated_dict):
+    corr = []
+    strongly_corr = []
+    no_corr = []
+    for column in correlated_dict:
+        for unique_val in correlated_dict[column]:
+            if correlated_dict[column][unique_val]['correlation'] == 'no correlation':
+                no_corr.append(column + '_' + unique_val)
+            if correlated_dict[column][unique_val]['correlation'] == 'correlated':
+                corr.append(column + '_' + unique_val)
+            if correlated_dict[column][unique_val]['correlation'] == 'strongly correlated':
+                strongly_corr.append(column + '_' + unique_val)
+    return corr, strongly_corr, no_corr
+
 #graph_all_columns(mushrooms)
 #plt.show()
-#all_col_ratios = get_all_ratios(mushrooms)
-#set_correlation(all_col_ratios)
+mushrooms_dummies = pd.get_dummies(mushrooms)
+all_col_ratios = get_all_ratios(mushrooms)
+set_correlation(all_col_ratios)
+corr, strongly_corr, no_corr = sort_correlations(all_col_ratios)
+
 #removed_total_columns = rem_small_totals(all_col_ratios)
 #removed_ratio_columns = rem_small_ratios(all_col_ratios)
-y_data = mushrooms['class']
-x_data = mushrooms.drop(columns=['class'])
-
-lr = LogisticRegression()
-
-
-
-
-
-
-
